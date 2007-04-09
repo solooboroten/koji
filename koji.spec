@@ -8,13 +8,14 @@
 %define release %{baserelease}
 %endif
 Name: koji
-Version: 1.0
+Version: 1.1
 Release: %{release}%{?dist}
 License: LGPL
 Summary: Build system tools
 Group: Applications/System
 URL: http://hosted.fedoraproject.org/projects/koji
 Source: %{name}-%{PACKAGE_VERSION}.tar.bz2
+Source1: fedora-packager-setup.sh
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch: noarch
 Requires: python-krbV >= 1.0.13
@@ -89,6 +90,7 @@ koji-web is a web UI to the Koji system.
 %install
 rm -rf $RPM_BUILD_ROOT
 make DESTDIR=$RPM_BUILD_ROOT install
+install -p %{SOURCE1} $RPM_BUILD_ROOT%{_bindir}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -151,6 +153,12 @@ if [ $1 = 0 ]; then
 fi
 
 %changelog
+* Mon Apr 09 2007 Jesse Keating <jkeating@redhat.com> 1.1-1
+- make the output listPackages() consistent regardless of with_dups
+- prevent large batches of repo deletes from holding up regens
+- allow sorting the host list by arches
+- Add a script to setup Fedora developer's environment
+
 * Mon Apr 02 2007 Jesse Keating <jkeating@redhat.com> 1.0-1
 - Release 1.0!
 

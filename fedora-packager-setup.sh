@@ -56,17 +56,19 @@ serverca = ~/.koji/serverca.crt
 
 EOF
 
-echo "creating cert for import into browser to allow user authentication on the website.
-Choose your own password,  you will be propmted for this when using the cert.
+echo "Creating an SSL Certificate to import into your browser to allow user authentication on at http://koji.fedoraproject.org/koji.
+Choose your own passphrase,  you will be prompted for this when using the certificate.
 
-- import pkcs12 cert into Firefox:
+- To import the Certificate into Firefox:
 
 Edit -> Preferences -> Advanced
 Click "View Certificates"
 On "Your Certificates" tab, click "Import"
-Select fedora-client-cert.p12
-Type the export password (if you specified one)
-You should see your username appear under "Fedora Project"
+Select fedora-client-cert.p12 (from the directory you ran this script in)
+Type the export passphrase (if you specified one)
+
+Once imported, you should see a certificate named "Fedora Project"
+Your username should appear underneath this.
  
-- You should now be able to click the "login" link on the website successfully"
+- You should now be able to click the "login" link at http://koji.fedoraproject.org/koji successfully"
 openssl pkcs12 -export -in ~/.koji/client.crt -CAfile ~/.koji/clientca.crt -out fedora-client-cert.p12

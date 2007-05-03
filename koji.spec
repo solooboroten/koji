@@ -1,6 +1,6 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
-%define baserelease 1
+%define baserelease 2
 #build with --define 'testbuild 1' to have a timestamp appended to release
 %if x%{?testbuild} == x1
 %define release %{baserelease}.%(date +%%Y%%m%%d.%%H%%M.%%S)
@@ -153,6 +153,9 @@ if [ $1 = 0 ]; then
 fi
 
 %changelog
+* Thu May 03 2007 Jesse Keating <jkeating@redhat.com> 1.1-2
+- Clean up some of the text in fedora-packager-setup.sh
+
 * Mon Apr 09 2007 Jesse Keating <jkeating@redhat.com> 1.1-1
 - make the output listPackages() consistent regardless of with_dups
 - prevent large batches of repo deletes from holding up regens

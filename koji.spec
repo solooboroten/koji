@@ -1,6 +1,6 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
-%define baserelease 2
+%define baserelease 3
 #build with --define 'testbuild 1' to have a timestamp appended to release
 %if x%{?testbuild} == x1
 %define release %{baserelease}.%(date +%%Y%%m%%d.%%H%%M.%%S)
@@ -151,6 +151,9 @@ if [ $1 = 0 ]; then
 fi
 
 %changelog
+* Tue May 15 2007 Jesse Keating <jkeating@redhat.com> - 1.2.0-3
+- More fixes to fedora-packager-setup.sh from mbonnet
+
 * Tue May 15 2007 Jesse Keating <jkeating@redhat.com> - 1.2.0-2
 - overwrite and hardlink ssl cert for fedora packagers (dgilmore)
 

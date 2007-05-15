@@ -8,7 +8,7 @@
 %define release %{baserelease}
 %endif
 Name: koji
-Version: 1.1
+Version: 1.2.0
 Release: %{release}%{?dist}
 License: LGPL
 Summary: Build system tools
@@ -51,7 +51,7 @@ Requires(pre): /usr/sbin/useradd
 Requires: cvs
 Requires: rpm-build
 Requires: redhat-rpm-config
-Requires: createrepo >= 0.4.4
+Requires: createrepo >= 0.4.8-2
 
 %description builder
 koji-builder is the daemon that runs on build machines and executes
@@ -62,8 +62,6 @@ Summary: Koji Utilities
 Group: Applications/Internet
 Requires: postgresql-python
 Requires: %{name} = %{version}-%{release}
-Requires: rpm-build
-Requires: createrepo >= 0.4.4
 
 %description utils
 Utilities for the Koji system
@@ -153,8 +151,32 @@ if [ $1 = 0 ]; then
 fi
 
 %changelog
+* Tue May 15 2007 Jesse Keating <jkeating@redhat.com> - 1.2.0-2
+- overwrite and hardlink ssl cert for fedora packagers (dgilmore)
+
+* Tue May 15 2007 Mike Bonnet <mikeb@redhat.com> - 1.2.0-1
+- change version numbering to a 3-token scheme
+- install the koji favicon
+
+* Mon May 14 2007 Mike Bonnet <mikeb@redhat.com> - 1.1-5
+- cleanup koji-utils Requires
+- fix encoding and formatting in email notifications
+- expand archlist based on ExclusiveArch/BuildArchs
+- allow import of rpms without srpms
+- commit before linking in prepRepo to release db locks
+- remove exec bit from kojid logs and uploaded files (patch by Enrico Scholz)
+
 * Thu May 03 2007 Jesse Keating <jkeating@redhat.com> 1.1-2
 - Clean up some of the text in fedora-packager-setup.sh
+
+* Tue May  1 2007 Mike Bonnet <mikeb@redhat.com> - 1.1-4
+- remove spurious Requires: from the koji-utils package
+
+* Tue May  1 2007 Mike Bonnet <mikeb@redhat.com> - 1.1-3
+- fix typo in BuildNotificationTask (patch provided by Michael Schwendt)
+- add the --changelog param to the buildinfo command
+- always send email notifications to the package builder and package owner
+- improvements to the web UI
 
 * Mon Apr 09 2007 Jesse Keating <jkeating@redhat.com> 1.1-1
 - make the output listPackages() consistent regardless of with_dups

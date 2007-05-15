@@ -4,10 +4,15 @@ echo Creating User Koji environment
 if [ ! -d ~/.koji ]; then
 mkdir  ~/.koji
 fi
+if [ -f ~/.fedora.cert ] && [ -f ~/.koji/client.crt ]; then
+    if [ ~/.fedora.cert -nt ~/.koji/client.crt ]; then 
+        rm ~/.koji/client.crt
+    fi
+fi
 
 if [ ! -f ~/.koji/client.crt ]; then
     if [ -f ~/.fedora.cert ]; then
-        cp ~/.fedora.cert  ~/.koji/client.crt
+        cp -l ~/.fedora.cert  ~/.koji/client.crt
     else
         echo "you need a client cert please download one from https://admin.fedoraproject.org/accounts/gen-cert.cgi"
         echo "Save it to ~/.koji/client.crt"
@@ -17,13 +22,13 @@ if [ ! -f ~/.koji/client.crt ]; then
 fi
 
 if [ -f ~/.fedora-upload-ca.cert ]; then
-    cp ~/.fedora-upload-ca.cert ~/.koji/clientca.crt
+    cp -l ~/.fedora-upload-ca.cert ~/.koji/clientca.crt
 else
     wget "http://fedoraproject.org/wiki/PackageMaintainers/BuildSystemClientSetup?action=AttachFile&do=get&target=fedora-upload-ca.cert" -O ~/.koji/clientca.crt
 fi
 
 if [ -f ~/.fedora-server-ca.cert ]; then
-    cp ~/.fedora-server-ca.cert ~/.koji/serverca.crt
+    cp -l ~/.fedora-server-ca.cert ~/.koji/serverca.crt
 else
     wget "http://fedoraproject.org/wiki/PackageMaintainers/BuildSystemClientSetup?action=AttachFile&do=get&target=fedora-server-ca.cert" -O ~/.koji/serverca.crt
 fi

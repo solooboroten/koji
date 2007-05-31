@@ -47,6 +47,9 @@ server = http://koji.fedoraproject.org/kojihub
 ;url of web interface
 weburl = http://koji.fedoraproject.org/koji
 
+;url of package download site
+pkgurl = http://koji.fedoraproject.org/packages
+
 ;path to the koji top directory
 ;topdir = /mnt/koji
 

@@ -1,6 +1,6 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
-%define baserelease 3
+%define baserelease 1
 #build with --define 'testbuild 1' to have a timestamp appended to release
 %if x%{?testbuild} == x1
 %define release %{baserelease}.%(date +%%Y%%m%%d.%%H%%M.%%S)
@@ -8,19 +8,21 @@
 %define release %{baserelease}
 %endif
 Name: koji
-Version: 1.2.0
+Version: 1.2.2
 Release: %{release}%{?dist}
 License: LGPL
 Summary: Build system tools
 Group: Applications/System
 URL: http://hosted.fedoraproject.org/projects/koji
-Source: %{name}-%{PACKAGE_VERSION}.tar.bz2
+Source: %{name}-%{version}.tar.bz2
 Source1: fedora-packager-setup.sh
+Patch0: fedora-config.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch: noarch
 Requires: python-krbV >= 1.0.13
 Requires: rpm-python
 Requires: pyOpenSSL
+Requires: python-urlgrabber
 BuildRequires: python
 
 %description
@@ -82,6 +84,7 @@ koji-web is a web UI to the Koji system.
 
 %prep
 %setup -q
+%patch0 -p1 -b .orig
 
 %build
 
@@ -151,6 +154,15 @@ if [ $1 = 0 ]; then
 fi
 
 %changelog
+* Tue Jun  5 2007 Mike Bonnet <mikeb@redhat.com> - 1.2.2-1
+- only allow admins to perform non-scratch builds from srpm
+- bug fixes to the cmd-line and web UIs
+- don't allow ExclusiveArch to expand the archlist (bz#239359)
+- add a summary line stating whether the task succeeded or failed to the end of the "watch-task" output
+- add a search box to the header of every page in the web UI
+- new koji download-build command (patch provided by Dan Berrange)
+- patch /etc/koji.conf so the cli will work out-of-the-box with Fedora Koji
+
 * Tue May 15 2007 Jesse Keating <jkeating@redhat.com> - 1.2.0-3
 - More fixes to fedora-packager-setup.sh from mbonnet
 

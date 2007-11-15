@@ -21,12 +21,12 @@ fi
 
 if [ ! -f ~/.fedora-upload-ca.cert ]; then
     check_wget
-    /usr/bin/wget -q "http://fedoraproject.org/wiki/PackageMaintainers/BuildSystemClientSetup?action=AttachFile&do=get&target=fedora-upload-ca.cert" -O ~/.fedora-upload-ca.cert
+    /usr/bin/wget -q "https://admin.fedoraproject.org/accounts/fedora-upload-ca.cert" -O ~/.fedora-upload-ca.cert
 fi
 
 if [ ! -f ~/.fedora-server-ca.cert ]; then
     check_wget
-    /usr/bin/wget -q "http://fedoraproject.org/wiki/PackageMaintainers/BuildSystemClientSetup?action=AttachFile&do=get&target=fedora-server-ca.cert" -O ~/.fedora-server-ca.cert
+    /usr/bin/wget -q "https://admin.fedoraproject.org/accounts/fedora-server-ca.cert" -O ~/.fedora-server-ca.cert
 fi
 
 if [ ! -d ~/.koji ]; then

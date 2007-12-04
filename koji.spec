@@ -1,6 +1,6 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
-%define baserelease 1
+%define baserelease 2
 #build with --define 'testbuild 1' to have a timestamp appended to release
 %if x%{?testbuild} == x1
 %define release %{baserelease}.%(date +%%Y%%m%%d.%%H%%M.%%S)
@@ -15,7 +15,6 @@ Summary: Build system tools
 Group: Applications/System
 URL: http://hosted.fedoraproject.org/projects/koji
 Source: %{name}-%{version}.tar.bz2
-Source1: fedora-packager-setup.sh
 Patch0: fedora-config.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch: noarch
@@ -91,7 +90,6 @@ koji-web is a web UI to the Koji system.
 %install
 rm -rf $RPM_BUILD_ROOT
 make DESTDIR=$RPM_BUILD_ROOT install
-install -p %{SOURCE1} $RPM_BUILD_ROOT%{_bindir}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -154,6 +152,9 @@ if [ $1 = 0 ]; then
 fi
 
 %changelog
+* Tue Dec 04 2007 Dennis Gilmore <dennis@ausil.us> -1.2.2-2
+- remove fedora-packager-setup.sh it is now part of fedora-packager
+
 * Tue Jun  5 2007 Mike Bonnet <mikeb@redhat.com> - 1.2.2-1
 - only allow admins to perform non-scratch builds from srpm
 - bug fixes to the cmd-line and web UIs

@@ -1,6 +1,6 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
-%define baserelease 2
+%define baserelease 1
 #build with --define 'testbuild 1' to have a timestamp appended to release
 %if x%{?testbuild} == x1
 %define release %{baserelease}.%(date +%%Y%%m%%d.%%H%%M.%%S)
@@ -8,19 +8,20 @@
 %define release %{baserelease}
 %endif
 Name: koji
-Version: 1.1
+Version: 1.2.3
 Release: %{release}%{?dist}
 License: LGPL
 Summary: Build system tools
 Group: Applications/System
 URL: http://hosted.fedoraproject.org/projects/koji
 Source: %{name}-%{PACKAGE_VERSION}.tar.bz2
-Source1: fedora-packager-setup.sh
+Patch0: fedora-config.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch: noarch
 Requires: python-krbV >= 1.0.13
 Requires: rpm-python
 Requires: pyOpenSSL
+Requires: python-urlgrabber
 BuildRequires: python
 
 %description
@@ -42,16 +43,18 @@ koji-hub is the XMLRPC interface to the koji database
 Summary: Koji RPM builder daemon
 Group: Applications/System
 Requires: %{name} = %{version}-%{release}
-Requires: mock >= 0.5-3
+Requires: mock >= 0.8.7
 Requires(post): /sbin/chkconfig
 Requires(post): /sbin/service
 Requires(preun): /sbin/chkconfig
 Requires(preun): /sbin/service
 Requires(pre): /usr/sbin/useradd
-Requires: cvs
+Requires: /usr/bin/cvs
+Requires: /usr/bin/svn
+Requires: /usr/bin/git
 Requires: rpm-build
 Requires: redhat-rpm-config
-Requires: createrepo >= 0.4.4
+Requires: createrepo >= 0.4.11
 
 %description builder
 koji-builder is the daemon that runs on build machines and executes
@@ -62,8 +65,6 @@ Summary: Koji Utilities
 Group: Applications/Internet
 Requires: postgresql-python
 Requires: %{name} = %{version}-%{release}
-Requires: rpm-build
-Requires: createrepo >= 0.4.4
 
 %description utils
 Utilities for the Koji system
@@ -84,13 +85,13 @@ koji-web is a web UI to the Koji system.
 
 %prep
 %setup -q
+%patch0 -p1 -b .orig
 
 %build
 
 %install
 rm -rf $RPM_BUILD_ROOT
 make DESTDIR=$RPM_BUILD_ROOT install
-install -p %{SOURCE1} $RPM_BUILD_ROOT%{_bindir}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -153,14 +154,47 @@ if [ $1 = 0 ]; then
 fi
 
 %changelog
-* Thu May 03 2007 Jesse Keating <jkeating@redhat.com> 1.1-2
-- Clean up some of the text in fedora-packager-setup.sh
+* Fri Dec 14 2007 jkeating <jkeating@redhat.com> 1.2.3-1
+- New upstream release with lots of updates, bugfixes, and enhancements.
+
+* Tue Jun  5 2007 Mike Bonnet <mikeb@redhat.com> - 1.2.2-1
+- only allow admins to perform non-scratch builds from srpm
+- bug fixes to the cmd-line and web UIs
+
+* Thu May 31 2007 Mike Bonnet <mikeb@redhat.com> - 1.2.1-1
+- don't allow ExclusiveArch to expand the archlist (bz#239359)
+- add a summary line stating whether the task succeeded or failed to the end of the "watch-task" output
+- add a search box to the header of every page in the web UI
+- new koji download-build command (patch provided by Dan Berrange)
+
+* Tue May 15 2007 Mike Bonnet <mikeb@redhat.com> - 1.2.0-1
+- change version numbering to a 3-token scheme
+- install the koji favicon
+
+* Mon May 14 2007 Mike Bonnet <mikeb@redhat.com> - 1.1-5
+- cleanup koji-utils Requires
+- fix encoding and formatting in email notifications
+- expand archlist based on ExclusiveArch/BuildArchs
+- allow import of rpms without srpms
+- commit before linking in prepRepo to release db locks
+- remove exec bit from kojid logs and uploaded files (patch by Enrico Scholz)
+
+* Tue May  1 2007 Mike Bonnet <mikeb@redhat.com> - 1.1-4
+- remove spurious Requires: from the koji-utils package
+
+* Tue May  1 2007 Mike Bonnet <mikeb@redhat.com> - 1.1-3
+- fix typo in BuildNotificationTask (patch provided by Michael Schwendt)
+- add the --changelog param to the buildinfo command
+- always send email notifications to the package builder and package owner
+- improvements to the web UI
+
+* Tue Apr 17 2007 Mike Bonnet <mikeb@redhat.com> - 1.1-2
+- re-enable use of the --update flag to createrepo
 
 * Mon Apr 09 2007 Jesse Keating <jkeating@redhat.com> 1.1-1
 - make the output listPackages() consistent regardless of with_dups
 - prevent large batches of repo deletes from holding up regens
 - allow sorting the host list by arches
-- Add a script to setup Fedora developer's environment
 
 * Mon Apr 02 2007 Jesse Keating <jkeating@redhat.com> 1.0-1
 - Release 1.0!

@@ -1,8 +1,8 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
-%define baserelease 1
+%define baserelease 2
 #build with --define 'testbuild 1' to have a timestamp appended to release
-%if x%{?testbuild} == x1
+%if "x%{?testbuild}" == "x1"
 %define release %{baserelease}.%(date +%%Y%%m%%d.%%H%%M.%%S)
 %else
 %define release %{baserelease}
@@ -10,7 +10,7 @@
 Name: koji
 Version: 1.2.5
 Release: %{release}%{?dist}
-License: LGPL
+License: LGPLv2
 Summary: Build system tools
 Group: Applications/System
 URL: http://fedorahosted.org/koji
@@ -159,6 +159,10 @@ if [ $1 = 0 ]; then
 fi
 
 %changelog
+* Tue Aug  5 2008 Tom "spot" Callaway <tcallawa@redhat.com> 1.2.5-2
+- fix conditional (line 5)
+- fix license tag
+
 * Fri Jan 25 2008 jkeating <jkeating@redhat.com> 1.2.5-1
 - Put createrepo arguments in correct order
 

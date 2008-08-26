@@ -1,21 +1,21 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
-%define baserelease 2
+%define baserelease 1
 #build with --define 'testbuild 1' to have a timestamp appended to release
-%if x%{?testbuild} == x1
+%if "x%{?testbuild}" == "x1"
 %define release %{baserelease}.%(date +%%Y%%m%%d.%%H%%M.%%S)
 %else
 %define release %{baserelease}
 %endif
 Name: koji
-Version: 1.2.2
+Version: 1.2.6
 Release: %{release}%{?dist}
-License: LGPL
+License: LGPLv2
 Summary: Build system tools
 Group: Applications/System
-URL: http://hosted.fedoraproject.org/projects/koji
-Source: %{name}-%{version}.tar.bz2
+URL: http://fedorahosted.org/koji
 Patch0: fedora-config.patch
+Source: https://fedorahosted.org/koji/attachment/wiki/KojiRelease/%{name}-%{PACKAGE_VERSION}.tar.bz2
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch: noarch
 Requires: python-krbV >= 1.0.13
@@ -43,16 +43,25 @@ koji-hub is the XMLRPC interface to the koji database
 Summary: Koji RPM builder daemon
 Group: Applications/System
 Requires: %{name} = %{version}-%{release}
-Requires: mock >= 0.5-3
+Requires: mock >= 0.8.7
 Requires(post): /sbin/chkconfig
 Requires(post): /sbin/service
 Requires(preun): /sbin/chkconfig
 Requires(preun): /sbin/service
 Requires(pre): /usr/sbin/useradd
-Requires: cvs
+Requires: /usr/bin/cvs
+Requires: /usr/bin/svn
+Requires: /usr/bin/git
 Requires: rpm-build
 Requires: redhat-rpm-config
-Requires: createrepo >= 0.4.8-2
+%if 0%{?rhel} >= 5
+Requires: createrepo >= 0.4.11-2
+%endif
+%if 0%{?fedora} >= 9
+Requires: createrepo >= 0.9.2
+%else
+Requires: createrepo >= 0.4.11-2
+%endif
 
 %description builder
 koji-builder is the daemon that runs on build machines and executes
@@ -109,10 +118,13 @@ rm -rf $RPM_BUILD_ROOT
 %files utils
 %defattr(-,root,root)
 %{_sbindir}/kojira
+%{_sbindir}/koji-gc
 %{_initrddir}/kojira
 %config(noreplace) %{_sysconfdir}/sysconfig/kojira
-%{_sysconfdir}/kojira
+%dir %{_sysconfdir}/kojira
 %config(noreplace) %{_sysconfdir}/kojira/kojira.conf
+%dir %{_sysconfdir}/koji-gc
+%config(noreplace) %{_sysconfdir}/koji-gc/koji-gc.conf
 
 %files web
 %defattr(-,root,root)
@@ -125,7 +137,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_sbindir}/kojid
 %{_initrddir}/kojid
 %config(noreplace) %{_sysconfdir}/sysconfig/kojid
-%{_sysconfdir}/kojid
+%dir %{_sysconfdir}/kojid
 %config(noreplace) %{_sysconfdir}/kojid/kojid.conf
 %attr(-,kojibuilder,kojibuilder) /etc/mock/koji
 
@@ -152,23 +164,39 @@ if [ $1 = 0 ]; then
 fi
 
 %changelog
-* Tue Dec 04 2007 Dennis Gilmore <dennis@ausil.us> -1.2.2-2
-- remove fedora-packager-setup.sh it is now part of fedora-packager
+* Mon Aug 25 2008 Dennis Gilmore <dennis@ausil.us> - 1.2.6-1
+- update to 1.2.6
+- make sure we have to correct version of createrepo on Fedora 8 
+
+* Tue Aug  5 2008 Tom "spot" Callaway <tcallawa@redhat.com> 1.2.5-2
+- fix conditional (line 5)
+- fix license tag
+
+* Fri Jan 25 2008 jkeating <jkeating@redhat.com> 1.2.5-1
+- Put createrepo arguments in correct order
+
+* Thu Jan 24 2008 jkeating <jkeating@redhat.com> 1.2.4-1
+- Use the --skip-stat flag in createrepo calls.
+- canonicalize tag arches before using them (dgilmore)
+- fix return value of delete_build
+- Revert to getfile urls if the task is not successful in emails
+- Pass --target instead of --arch to mock.
+- ignore trashcan tag in prune-signed-copies command
+- add the "allowed_scms" kojid parameter
+- allow filtering builds by the person who built them
+
+* Fri Dec 14 2007 jkeating <jkeating@redhat.com> 1.2.3-1
+- New upstream release with lots of updates, bugfixes, and enhancements.
 
 * Tue Jun  5 2007 Mike Bonnet <mikeb@redhat.com> - 1.2.2-1
 - only allow admins to perform non-scratch builds from srpm
 - bug fixes to the cmd-line and web UIs
+
+* Thu May 31 2007 Mike Bonnet <mikeb@redhat.com> - 1.2.1-1
 - don't allow ExclusiveArch to expand the archlist (bz#239359)
 - add a summary line stating whether the task succeeded or failed to the end of the "watch-task" output
 - add a search box to the header of every page in the web UI
 - new koji download-build command (patch provided by Dan Berrange)
-- patch /etc/koji.conf so the cli will work out-of-the-box with Fedora Koji
-
-* Tue May 15 2007 Jesse Keating <jkeating@redhat.com> - 1.2.0-3
-- More fixes to fedora-packager-setup.sh from mbonnet
-
-* Tue May 15 2007 Jesse Keating <jkeating@redhat.com> - 1.2.0-2
-- overwrite and hardlink ssl cert for fedora packagers (dgilmore)
 
 * Tue May 15 2007 Mike Bonnet <mikeb@redhat.com> - 1.2.0-1
 - change version numbering to a 3-token scheme
@@ -182,9 +210,6 @@ fi
 - commit before linking in prepRepo to release db locks
 - remove exec bit from kojid logs and uploaded files (patch by Enrico Scholz)
 
-* Thu May 03 2007 Jesse Keating <jkeating@redhat.com> 1.1-2
-- Clean up some of the text in fedora-packager-setup.sh
-
 * Tue May  1 2007 Mike Bonnet <mikeb@redhat.com> - 1.1-4
 - remove spurious Requires: from the koji-utils package
 
@@ -194,11 +219,13 @@ fi
 - always send email notifications to the package builder and package owner
 - improvements to the web UI
 
+* Tue Apr 17 2007 Mike Bonnet <mikeb@redhat.com> - 1.1-2
+- re-enable use of the --update flag to createrepo
+
 * Mon Apr 09 2007 Jesse Keating <jkeating@redhat.com> 1.1-1
 - make the output listPackages() consistent regardless of with_dups
 - prevent large batches of repo deletes from holding up regens
 - allow sorting the host list by arches
-- Add a script to setup Fedora developer's environment
 
 * Mon Apr 02 2007 Jesse Keating <jkeating@redhat.com> 1.0-1
 - Release 1.0!

@@ -2,15 +2,15 @@
 
 %define baserelease 1
 #build with --define 'testbuild 1' to have a timestamp appended to release
-%if x%{?testbuild} == x1
+%if "x%{?testbuild}" == "x1"
 %define release %{baserelease}.%(date +%%Y%%m%%d.%%H%%M.%%S)
 %else
 %define release %{baserelease}
 %endif
 Name: koji
-Version: 1.2.5
+Version: 1.2.6
 Release: %{release}%{?dist}
-License: LGPL
+License: LGPLv2
 Summary: Build system tools
 Group: Applications/System
 URL: http://fedorahosted.org/koji
@@ -59,6 +59,8 @@ Requires: createrepo >= 0.4.11-2
 %endif
 %if 0%{?fedora} >= 9
 Requires: createrepo >= 0.9.2
+%else
+Requires: createrepo >= 0.4.11-2
 %endif
 
 %description builder
@@ -116,10 +118,13 @@ rm -rf $RPM_BUILD_ROOT
 %files utils
 %defattr(-,root,root)
 %{_sbindir}/kojira
+%{_sbindir}/koji-gc
 %{_initrddir}/kojira
 %config(noreplace) %{_sysconfdir}/sysconfig/kojira
-%{_sysconfdir}/kojira
+%dir %{_sysconfdir}/kojira
 %config(noreplace) %{_sysconfdir}/kojira/kojira.conf
+%dir %{_sysconfdir}/koji-gc
+%config(noreplace) %{_sysconfdir}/koji-gc/koji-gc.conf
 
 %files web
 %defattr(-,root,root)
@@ -132,7 +137,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_sbindir}/kojid
 %{_initrddir}/kojid
 %config(noreplace) %{_sysconfdir}/sysconfig/kojid
-%{_sysconfdir}/kojid
+%dir %{_sysconfdir}/kojid
 %config(noreplace) %{_sysconfdir}/kojid/kojid.conf
 %attr(-,kojibuilder,kojibuilder) /etc/mock/koji
 
@@ -159,6 +164,14 @@ if [ $1 = 0 ]; then
 fi
 
 %changelog
+* Mon Aug 25 2008 Dennis Gilmore <dennis@ausil.us> - 1.2.6-1
+- update to 1.2.6
+- make sure we have to correct version of createrepo on Fedora 8 
+
+* Tue Aug  5 2008 Tom "spot" Callaway <tcallawa@redhat.com> 1.2.5-2
+- fix conditional (line 5)
+- fix license tag
+
 * Fri Jan 25 2008 jkeating <jkeating@redhat.com> 1.2.5-1
 - Put createrepo arguments in correct order
 

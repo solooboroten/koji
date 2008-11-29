@@ -1,6 +1,6 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
-%define baserelease 1
+%define baserelease 2
 #build with --define 'testbuild 1' to have a timestamp appended to release
 %if "x%{?testbuild}" == "x1"
 %define release %{baserelease}.%(date +%%Y%%m%%d.%%H%%M.%%S)
@@ -164,6 +164,9 @@ if [ $1 = 0 ]; then
 fi
 
 %changelog
+* Sat Nov 29 2008 Ignacio Vazquez-Abrams <ivazqueznet+rpm@gmail.com> - 1.2.6-2
+- Rebuild for Python 2.6
+
 * Mon Aug 25 2008 Dennis Gilmore <dennis@ausil.us> - 1.2.6-1
 - update to 1.2.6
 - make sure we have to correct version of createrepo on Fedora 8 

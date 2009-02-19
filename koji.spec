@@ -8,7 +8,7 @@
 %define release %{baserelease}
 %endif
 Name: koji
-Version: 1.2.6
+Version: 1.3.0
 Release: %{release}%{?dist}
 License: LGPLv2
 Summary: Build system tools
@@ -43,7 +43,7 @@ koji-hub is the XMLRPC interface to the koji database
 Summary: Koji RPM builder daemon
 Group: Applications/System
 Requires: %{name} = %{version}-%{release}
-Requires: mock >= 0.8.7
+Requires: mock >= 0.9.14
 Requires(post): /sbin/chkconfig
 Requires(post): /sbin/service
 Requires(preun): /sbin/chkconfig
@@ -54,14 +54,7 @@ Requires: /usr/bin/svn
 Requires: /usr/bin/git
 Requires: rpm-build
 Requires: redhat-rpm-config
-%if 0%{?rhel} >= 5
-Requires: createrepo >= 0.4.11-2
-%endif
-%if 0%{?fedora} >= 9
-Requires: createrepo >= 0.9.2
-%else
-Requires: createrepo >= 0.4.11-2
-%endif
+Requires: createrepo >= 0.9.6
 
 %description builder
 koji-builder is the daemon that runs on build machines and executes
@@ -113,18 +106,22 @@ rm -rf $RPM_BUILD_ROOT
 %files hub
 %defattr(-,root,root)
 %{_datadir}/koji-hub
-%config(noreplace) /etc/httpd/conf.d/kojihub.conf
+%{_libexecdir}/koji-hub/
+%config(noreplace) %{_sysconfdir}/httpd/conf.d/kojihub.conf
+%config(noreplace) %{_sysconfdir}/koji-hub/hub.conf
 
 %files utils
 %defattr(-,root,root)
 %{_sbindir}/kojira
 %{_sbindir}/koji-gc
+%{_sbindir}/koji-shadow
 %{_initrddir}/kojira
 %config(noreplace) %{_sysconfdir}/sysconfig/kojira
 %dir %{_sysconfdir}/kojira
 %config(noreplace) %{_sysconfdir}/kojira/kojira.conf
 %dir %{_sysconfdir}/koji-gc
 %config(noreplace) %{_sysconfdir}/koji-gc/koji-gc.conf
+%config(noreplace) %{_sysconfdir}/koji-shadow/koji-shadow.conf
 
 %files web
 %defattr(-,root,root)
@@ -136,6 +133,8 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root)
 %{_sbindir}/kojid
 %{_initrddir}/kojid
+%{_libexecdir}/kojid/
+%{_datadir}/koji-builder
 %config(noreplace) %{_sysconfdir}/sysconfig/kojid
 %dir %{_sysconfdir}/kojid
 %config(noreplace) %{_sysconfdir}/kojid/kojid.conf
@@ -164,6 +163,12 @@ if [ $1 = 0 ]; then
 fi
 
 %changelog
+* Wed Feb 18 2009 Dennis Gilmore <dennis@ausil.us> - 1.3.0-1
+- update to 1.3.0
+
+* Sat Nov 29 2008 Ignacio Vazquez-Abrams <ivazqueznet+rpm@gmail.com> - 1.2.6-2
+- Rebuild for Python 2.6
+
 * Mon Aug 25 2008 Dennis Gilmore <dennis@ausil.us> - 1.2.6-1
 - update to 1.2.6
 - make sure we have to correct version of createrepo on Fedora 8 

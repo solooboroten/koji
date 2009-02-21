@@ -8,7 +8,7 @@
 %define release %{baserelease}
 %endif
 Name: koji
-Version: 1.3.0
+Version: 1.3.1
 Release: %{release}%{?dist}
 License: LGPLv2
 Summary: Build system tools
@@ -54,7 +54,13 @@ Requires: /usr/bin/svn
 Requires: /usr/bin/git
 Requires: rpm-build
 Requires: redhat-rpm-config
+%if 0%{?fedora}
 Requires: createrepo >= 0.9.6
+%endif
+%if 0%{?rhel}
+Requires: python-createrepo >= 0.9.6
+Requires: python-hashlib
+%endif
 
 %description builder
 koji-builder is the daemon that runs on build machines and executes
@@ -163,6 +169,9 @@ if [ $1 = 0 ]; then
 fi
 
 %changelog
+* Fri Feb 20 2009 Dennis Gilmore <dennis@ausil.us> - 1.3.1-1
+- update to 1.3.1
+
 * Wed Feb 18 2009 Dennis Gilmore <dennis@ausil.us> - 1.3.0-1
 - update to 1.3.0
 

@@ -9,7 +9,7 @@
 %endif
 Name: koji
 Version: 1.3.1
-Release: %{release}%{?dist}
+Release: %{release}%{?dist}.1
 License: LGPLv2
 Summary: Build system tools
 Group: Applications/System
@@ -60,6 +60,7 @@ Requires: createrepo >= 0.9.6
 %if 0%{?rhel}
 Requires: python-createrepo >= 0.9.6
 Requires: python-hashlib
+Requires: createrepo
 %endif
 
 %description builder
@@ -169,6 +170,9 @@ if [ $1 = 0 ]; then
 fi
 
 %changelog
+* Fri Feb 27 2009 Dennis Gilmore <dennis@ausil.us> - 1.3.1-1.1
+- koji-builder Requires createrepo on EL-5
+
 * Fri Feb 20 2009 Dennis Gilmore <dennis@ausil.us> - 1.3.1-1
 - update to 1.3.1
 

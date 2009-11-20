@@ -1,21 +1,14 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
-%define baserelease 3
-#build with --define 'testbuild 1' to have a timestamp appended to release
-%if "x%{?testbuild}" == "x1"
-%define release %{baserelease}.%(date +%%Y%%m%%d.%%H%%M.%%S)
-%else
-%define release %{baserelease}
-%endif
 Name: koji
-Version: 1.3.1
-Release: %{release}%{?dist}
+Version: 1.3.2
+Release: 1%{?dist}
 License: LGPLv2
 Summary: Build system tools
 Group: Applications/System
 URL: http://fedorahosted.org/koji
 Patch0: fedora-config.patch
-Source: https://fedorahosted.org/koji/attachment/wiki/KojiRelease/%{name}-%{PACKAGE_VERSION}.tar.bz2
+Source: https://fedorahosted.org/koji/attachment/wiki/KojiRelease/%{name}-%{version}.tar.bz2
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch: noarch
 Requires: python-krbV >= 1.0.13
@@ -31,6 +24,8 @@ contains shared libraries and the command-line interface.
 %package hub
 Summary: Koji XMLRPC interface
 Group: Applications/Internet
+License: LGPLv2 and GPLv2
+# rpmdiff lib (from rpmlint) is GPLv2 (only)
 Requires: httpd
 Requires: mod_python
 Requires: postgresql-python
@@ -38,6 +33,15 @@ Requires: %{name} = %{version}-%{release}
 
 %description hub
 koji-hub is the XMLRPC interface to the koji database
+
+%package hub-plugins
+Summary: Koji hub plugins
+Group: Applications/Internet
+Requires: %{name} = %{version}-%{release}
+Requires: %{name}-hub = %{version}-%{release}
+
+%description hub-plugins
+Plugins to the koji XMLRPC interface
 
 %package builder
 Summary: Koji RPM builder daemon
@@ -54,12 +58,15 @@ Requires: /usr/bin/svn
 Requires: /usr/bin/git
 Requires: rpm-build
 Requires: redhat-rpm-config
+Requires: pykickstart                                                                               
+Requires: pycdio   
 %if 0%{?fedora}
 Requires: createrepo >= 0.9.6
 %endif
 %if 0%{?rhel}
 Requires: python-createrepo >= 0.9.6
 Requires: python-hashlib
+Requires: createrepo
 %endif
 
 %description builder
@@ -116,6 +123,11 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/kojihub.conf
 %config(noreplace) %{_sysconfdir}/koji-hub/hub.conf
 
+%files hub-plugins
+%defattr(-,root,root)
+%dir %{_prefix}/lib/koji-hub-plugins
+%{_prefix}/lib/koji-hub-plugins/*.py*
+
 %files utils
 %defattr(-,root,root)
 %{_sbindir}/kojira
@@ -169,6 +181,9 @@ if [ $1 = 0 ]; then
 fi
 
 %changelog
+* Fri Nov 20 2009 Dennis Gilmore <dennis@ausil.us> - 1.3.2-1
+- update to 1.3.2
+
 * Fri Jul 24 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.3.1-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_12_Mass_Rebuild
 

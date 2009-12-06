@@ -1,0 +1,65 @@
+From 43af4add203e01803f32c4847e0a79afc16916e5 Mon Sep 17 00:00:00 2001
+From: Mike McLean <mikem@redhat.com>
+Date: Thu, 3 Dec 2009 15:52:23 -0500
+Subject: [PATCH 1/2] soft dependencies for livecd code
+
+---
+ builder/kojid |   21 +++++++++++++++++----
+ koji.spec     |    2 --
+ 2 files changed, 17 insertions(+), 6 deletions(-)
+
+diff --git a/builder/kojid b/builder/kojid
+index 8e2ea80..af81534 100755
+--- a/builder/kojid
++++ b/builder/kojid
+@@ -58,10 +58,18 @@ from gzip import GzipFile
+ from optparse import OptionParser
+ from StringIO import StringIO
+ from xmlrpclib import Fault
+-import pykickstart.parser as ksparser
+-import pykickstart.handlers.control as kscontrol
+-import hashlib
+-import iso9660 # from pycdio
++
++#imports for LiveCD handler
++livecd_enabled = False
++try:
++    import pykickstart.parser as ksparser
++    import pykickstart.handlers.control as kscontrol
++    import hashlib
++    import iso9660 # from pycdio
++    livecd_enabled = True
++except ImportError:
++    pass
++
+ 
+ # our private modules
+ sys.path.insert(0, '/usr/share/koji-builder/lib')
+@@ -2181,6 +2189,11 @@ class LiveCDTask(BaseTaskHandler):
+         if not opts:
+             opts = {}
+ 
++        if not livecd_enabled:
++            self.logger.error("LiveCD features require the following dependencies: "
++                    "pykickstart, pycdio, and possibly python-hashlib")
++            raise koji.LiveCDError, 'LiveCD functions not available'
++
+         global options
+         target_info = session.getBuildTarget(target, strict=True)
+         build_tag = target_info['build_tag']
+diff --git a/koji.spec b/koji.spec
+index 6eada73..7899e8c 100644
+--- a/koji.spec
++++ b/koji.spec
+@@ -68,8 +68,6 @@ Requires: /usr/bin/svn
+ Requires: /usr/bin/git
+ Requires: rpm-build
+ Requires: redhat-rpm-config
+-Requires: pykickstart
+-Requires: pycdio
+ %if 0%{?rhel} >= 5
+ Requires: createrepo >= 0.4.11-2
+ %endif
+-- 
+1.6.5.2
+

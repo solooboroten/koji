@@ -2,12 +2,14 @@
 
 Name: koji
 Version: 1.3.2
-Release: 1%{?dist}
+Release: 1%{?dist}.1
 License: LGPLv2
 Summary: Build system tools
 Group: Applications/System
 URL: http://fedorahosted.org/koji
+#customises koji for Fedora's koji
 Patch0: fedora-config.patch
+Patch1: 0001-soft-dependencies-for-livecd-code.patch
 Source: https://fedorahosted.org/koji/attachment/wiki/KojiRelease/%{name}-%{version}.tar.bz2
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch: noarch
@@ -58,10 +60,10 @@ Requires: /usr/bin/svn
 Requires: /usr/bin/git
 Requires: rpm-build
 Requires: redhat-rpm-config
-Requires: pykickstart                                                                               
-Requires: pycdio   
 %if 0%{?fedora}
 Requires: createrepo >= 0.9.6
+Requires: pykickstart                                                                               
+Requires: pycdio   
 %endif
 %if 0%{?rhel}
 Requires: python-createrepo >= 0.9.6
@@ -181,6 +183,9 @@ if [ $1 = 0 ]; then
 fi
 
 %changelog
+* Sun Dec 06 2009 Dennis Gilmore <dennis@ausil.us> - 1.3.2-1.1
+- add patch to make livecd support optional. the pykickstart in RHEL 5 is too old
+
 * Fri Nov 20 2009 Dennis Gilmore <dennis@ausil.us> - 1.3.2-1
 - update to 1.3.2
 

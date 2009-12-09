@@ -2,7 +2,7 @@
 
 Name: koji
 Version: 1.3.2
-Release: 1%{?dist}.1
+Release: 1%{?dist}.2
 License: LGPLv2
 Summary: Build system tools
 Group: Applications/System
@@ -101,6 +101,7 @@ koji-web is a web UI to the Koji system.
 %prep
 %setup -q
 %patch0 -p1 -b .orig
+%patch1 -p1 -b .softdep
 
 %build
 
@@ -183,6 +184,9 @@ if [ $1 = 0 ]; then
 fi
 
 %changelog
+* Wed Dec 09 2009 Dennis Gilmore <dennis@ausil.us> - 1.3.2-1.2
+- actually apply the patch to make pykickstart optional
+
 * Sun Dec 06 2009 Dennis Gilmore <dennis@ausil.us> - 1.3.2-1.1
 - add patch to make livecd support optional. the pykickstart in RHEL 5 is too old
 

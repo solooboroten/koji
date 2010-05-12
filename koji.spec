@@ -2,7 +2,7 @@
 
 Name: koji
 Version: 1.3.2
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: LGPLv2
 Summary: Build system tools
 Group: Applications/System
@@ -60,13 +60,14 @@ Requires: rpm-build
 Requires: redhat-rpm-config
 Requires: pykickstart                                                                               
 Requires: pycdio   
-%if 0%{?fedora}
+%if 0%{?fedora} || 0%{?rhel} >= 6
 Requires: createrepo >= 0.9.6
-%endif
+%else
 %if 0%{?rhel}
 Requires: python-createrepo >= 0.9.6
 Requires: python-hashlib
 Requires: createrepo
+%endif
 %endif
 
 %description builder
@@ -181,6 +182,9 @@ if [ $1 = 0 ]; then
 fi
 
 %changelog
+* Tue May 11 2010 Dennis Gilmore <dennis@ausil.us> - 1.3.2-2
+- fix Requires for EL-6 on -builder package
+
 * Fri Nov 20 2009 Dennis Gilmore <dennis@ausil.us> - 1.3.2-1
 - update to 1.3.2
 

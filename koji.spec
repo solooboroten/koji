@@ -1,9 +1,10 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name: koji
-Version: 1.3.2
-Release: 2%{?dist}
-License: LGPLv2
+Version: 1.4.0
+Release: 1%{?dist}
+License: LGPLv2 and GPLv2+
+# koji.ssl libs (from plague) are GPLv2+
 Summary: Build system tools
 Group: Applications/System
 URL: http://fedorahosted.org/koji
@@ -46,6 +47,8 @@ Plugins to the koji XMLRPC interface
 %package builder
 Summary: Koji RPM builder daemon
 Group: Applications/System
+License: LGPLv2 and GPLv2+
+#mergerepos (from createrepo) is GPLv2+
 Requires: %{name} = %{version}-%{release}
 Requires: mock >= 0.9.14
 Requires(post): /sbin/chkconfig
@@ -60,14 +63,13 @@ Requires: rpm-build
 Requires: redhat-rpm-config
 Requires: pykickstart                                                                               
 Requires: pycdio   
-%if 0%{?fedora} || 0%{?rhel} >= 6
+%if 0%{?fedora} || 0%{?rhel} > 5
 Requires: createrepo >= 0.9.6
-%else
-%if 0%{?rhel}
+%endif
+%if 0%{?rhel} == 5
 Requires: python-createrepo >= 0.9.6
 Requires: python-hashlib
 Requires: createrepo
-%endif
 %endif
 
 %description builder
@@ -128,6 +130,8 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root)
 %dir %{_prefix}/lib/koji-hub-plugins
 %{_prefix}/lib/koji-hub-plugins/*.py*
+%dir %{_sysconfdir}/koji-hub/plugins/
+%config(noreplace) %{_sysconfdir}/koji-hub/plugins/messagebus.conf
 
 %files utils
 %defattr(-,root,root)
@@ -182,8 +186,26 @@ if [ $1 = 0 ]; then
 fi
 
 %changelog
-* Tue May 11 2010 Dennis Gilmore <dennis@ausil.us> - 1.3.2-2
-- fix Requires for EL-6 on -builder package
+* Fri Jul 09 2010 Dennis Gilmore <dennis@ausil.us> - 1.4.0-1
+- update to 1.4.0
+- Merge mead branch: support for building jars with Maven *
+- support for building appliance images *
+- soft dependencies for LiveCD/Appliance features
+- smarter prioritization of repo regenerations
+- package list policy to determine if package list changes are allowed
+- channel policy to determine which channel a task is placed in
+- edit host data via webui
+- description and comment fields for hosts *
+- cleaner log entries for kojihub
+- track user data in versioned tables *
+- allow setting retry parameters for the cli
+- track start time for tasks *
+- allow packages built from the same srpm to span multiple external repos
+- make the command used to fetch sources configuable per repo
+- kojira: remove unexpected directories
+- let kojid to decide if it can handle a noarch task
+- avoid extraneous ssl handshakes
+- schema changes to support starred items
 
 * Fri Nov 20 2009 Dennis Gilmore <dennis@ausil.us> - 1.3.2-1
 - update to 1.3.2

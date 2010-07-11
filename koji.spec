@@ -2,7 +2,7 @@
 
 Name: koji
 Version: 1.4.0
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: LGPLv2 and GPLv2+
 # koji.ssl libs (from plague) are GPLv2+
 Summary: Build system tools
@@ -62,7 +62,8 @@ Requires: /usr/bin/git
 Requires: rpm-build
 Requires: redhat-rpm-config
 Requires: pykickstart                                                                               
-Requires: pycdio   
+Requires: pycdio
+Requires: python-cheetah
 %if 0%{?fedora} || 0%{?rhel} > 5
 Requires: createrepo >= 0.9.6
 %endif
@@ -186,6 +187,9 @@ if [ $1 = 0 ]; then
 fi
 
 %changelog
+* Sat Jul 10 2010 Dennis Gilmore <dennis@ausil.us> - 1.4.0-2
+- add missing Requires: python-cheetah from koji-builder
+
 * Fri Jul 09 2010 Dennis Gilmore <dennis@ausil.us> - 1.4.0-1
 - update to 1.4.0
 - Merge mead branch: support for building jars with Maven *

@@ -2,7 +2,7 @@
 
 Name: koji
 Version: 1.4.0
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: LGPLv2 and GPLv2+
 # koji.ssl libs (from plague) are GPLv2+
 Summary: Build system tools
@@ -187,6 +187,9 @@ if [ $1 = 0 ]; then
 fi
 
 %changelog
+* Wed Jul 21 2010 David Malcolm <dmalcolm@redhat.com> - 1.4.0-3
+- Rebuilt for https://fedoraproject.org/wiki/Features/Python_2.7/MassRebuild
+
 * Sat Jul 10 2010 Dennis Gilmore <dennis@ausil.us> - 1.4.0-2
 - add missing Requires: python-cheetah from koji-builder
 

@@ -1,17 +1,14 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name: koji
-Version: 1.4.0
-Release: 4%{?dist}
+Version: 1.5.0
+Release: 1%{?dist}
 License: LGPLv2 and GPLv2+
 # koji.ssl libs (from plague) are GPLv2+
 Summary: Build system tools
 Group: Applications/System
 URL: http://fedorahosted.org/koji
 Patch0: fedora-config.patch
-
-# Fix python 2.7 incompatibilities (rbhz#619276)
-Patch1: python27.patch
 
 Source: https://fedorahosted.org/koji/attachment/wiki/KojiRelease/%{name}-%{version}.tar.bz2
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -107,7 +104,6 @@ koji-web is a web UI to the Koji system.
 %prep
 %setup -q
 %patch0 -p1 -b .orig
-%patch1 -p5
 
 %build
 
@@ -192,6 +188,9 @@ if [ $1 = 0 ]; then
 fi
 
 %changelog
+* Wed Dec 01 2010 Dennis Gilmore <dennis@ausil.us> - 1.5.0-1
+- update to 1.5.0
+
 * Tue Aug  3 2010 David Malcolm <dmalcolm@redhat.com> - 1.4.0-4
 - fix python 2.7 incompatibilities (rhbz 619276)
 

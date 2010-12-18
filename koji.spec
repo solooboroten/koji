@@ -1,7 +1,7 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name: koji
-Version: 1.5.0
+Version: 1.6.0
 Release: 1%{?dist}
 License: LGPLv2 and GPLv2+
 # koji.ssl libs (from plague) are GPLv2+
@@ -10,7 +10,7 @@ Group: Applications/System
 URL: http://fedorahosted.org/koji
 Patch0: fedora-config.patch
 
-Source: https://fedorahosted.org/koji/attachment/wiki/KojiRelease/%{name}-%{version}.tar.bz2
+Source: https://fedorahosted.org/releases/k/o/koji/%{name}-%{version}.tar.bz2
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch: noarch
 Requires: python-krbV >= 1.0.13
@@ -78,6 +78,24 @@ Requires: createrepo
 koji-builder is the daemon that runs on build machines and executes
 tasks that come through the Koji system.
 
+%package vm
+Summary: Koji virtual machine management daemon
+Group: Applications/System
+License: LGPLv2
+Requires: %{name} = %{version}-%{release}
+Requires(post): /sbin/chkconfig
+Requires(post): /sbin/service
+Requires(preun): /sbin/chkconfig
+Requires(preun): /sbin/service
+Requires: libvirt-python
+Requires: libxml2-python
+Requires: python-virtinst
+Requires: qemu-img
+
+%description vm
+koji-vm contains a supplemental build daemon that executes certain tasks in a
+virtual machine. This package is not required for most installations.
+
 %package utils
 Summary: Koji Utilities
 Group: Applications/Internet
@@ -134,6 +152,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_prefix}/lib/koji-hub-plugins/*.py*
 %dir %{_sysconfdir}/koji-hub/plugins/
 %config(noreplace) %{_sysconfdir}/koji-hub/plugins/messagebus.conf
+%config(noreplace) %{_sysconfdir}/koji-hub/plugins/rpm2maven.conf
 
 %files utils
 %defattr(-,root,root)
@@ -159,7 +178,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_sbindir}/kojid
 %{_initrddir}/kojid
 %{_libexecdir}/kojid/
-%{_datadir}/koji-builder
 %config(noreplace) %{_sysconfdir}/sysconfig/kojid
 %dir %{_sysconfdir}/kojid
 %config(noreplace) %{_sysconfdir}/kojid/kojid.conf
@@ -178,6 +196,24 @@ if [ $1 = 0 ]; then
   /sbin/chkconfig --del kojid
 fi
 
+%files vm
+%defattr(-,root,root)
+%{_sbindir}/kojivmd
+%{_datadir}/kojivmd
+%{_initrddir}/kojivmd
+%config(noreplace) %{_sysconfdir}/sysconfig/kojivmd
+%dir %{_sysconfdir}/kojivmd
+%config(noreplace) %{_sysconfdir}/kojivmd/kojivmd.conf
+
+%post vm
+/sbin/chkconfig --add kojivmd
+
+%preun vm
+if [ $1 = 0 ]; then
+  /sbin/service kojivmd stop &> /dev/null
+  /sbin/chkconfig --del kojivmd
+fi
+
 %post utils
 /sbin/chkconfig --add kojira
 /sbin/service kojira condrestart &> /dev/null || :
@@ -188,6 +224,9 @@ if [ $1 = 0 ]; then
 fi
 
 %changelog
+* Fri Dec 17 2010 Dennis Gilmore <dennis@ausil.us> - 1.6.0-1
+- update to 1.6.0
+
 * Wed Dec 01 2010 Dennis Gilmore <dennis@ausil.us> - 1.5.0-1
 - update to 1.5.0
 

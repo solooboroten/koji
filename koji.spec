@@ -9,7 +9,8 @@ Summary: Build system tools
 Group: Applications/System
 URL: http://fedorahosted.org/koji
 Patch0: fedora-config.patch
-Source: https://fedorahosted.org/releases/k/o/koji/%{name}-%{version}.tar.bz2
+Source0: https://fedorahosted.org/releases/k/o/koji/%{name}-%{version}.tar.bz2
+Source1: README.epel
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch: noarch
@@ -90,7 +91,10 @@ Requires(preun): /sbin/service
 Requires: libvirt-python
 Requires: libxml2-python
 Requires: python-virtinst
+%if 0%{?fedora}
+#Red Hat only ships on x86_64
 Requires: qemu-img
+%endif
 
 %description vm
 koji-vm contains a supplemental build daemon that executes certain tasks in a
@@ -122,6 +126,7 @@ koji-web is a web UI to the Koji system.
 %prep
 %setup -q
 %patch0 -p1 -b .orig
+cp $SOURCE2 .
 
 %build
 
@@ -198,6 +203,7 @@ fi
 
 %files vm
 %defattr(-,root,root)
+%doc README.epel
 %{_sbindir}/kojivmd
 %{_datadir}/kojivmd
 %{_initrddir}/kojivmd
@@ -224,6 +230,10 @@ if [ $1 = 0 ]; then
 fi
 
 %changelog
+* Mon Jan 03 2011 Dennis Gilmore <dennis@ausil.us> - 1.6.0-1.1
+- drop Requires on qemu-img on epel for koji-vm
+- add readme note on epel
+
 * Fri Dec 17 2010 Dennis Gilmore <dennis@ausil.us> - 1.6.0-1
 - update to 1.6.0
 

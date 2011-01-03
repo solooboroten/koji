@@ -1,0 +1,3 @@
+koji-vm requires qemu-img. the deps is dropped from epel packaging as Red Hat
+only ships the virt stack on x86_64. you will need to install it yourself or 
+build and maintain it on a non Red Hat supported arch.

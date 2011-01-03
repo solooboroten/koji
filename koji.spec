@@ -126,7 +126,7 @@ koji-web is a web UI to the Koji system.
 %prep
 %setup -q
 %patch0 -p1 -b .orig
-cp $SOURCE2 .
+cp %{SOURCE1} README.epel
 
 %build
 

@@ -10,7 +10,6 @@ Group: Applications/System
 URL: http://fedorahosted.org/koji
 Patch0: fedora-config.patch
 Source0: https://fedorahosted.org/released/koji/koji-%{version}.tar.bz2
-Source0: https://fedorahosted.org/releases/k/o/koji/%{name}-%{version}.tar.bz2
 Source1: README.epel
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)

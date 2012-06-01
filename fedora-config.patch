@@ -1,6 +1,6 @@
---- koji-1.4.0/cli/koji.conf.orig	2010-07-08 21:04:26.000000000 -0500
-+++ koji-1.4.0/cli/koji.conf	2010-07-09 10:21:24.000000000 -0500
-@@ -3,24 +3,24 @@
+--- koji-1.7.0/cli/koji.conf.orig	2012-05-31 14:05:43.000000000 -0500
++++ koji-1.7.0/cli/koji.conf	2012-06-01 10:50:12.000000000 -0500
+@@ -3,13 +3,13 @@
  ;configuration for koji cli tool
  
  ;url of XMLRPC server
@@ -16,9 +16,8 @@
 +pkgurl = http://koji.fedoraproject.org/packages
  
  ;path to the koji top directory
--;topdir = /mnt/koji
-+topdir = /mnt/koji
- 
+ ;topdir = /mnt/koji
+@@ -22,10 +22,11 @@
  ;configuration for SSL authentication
  
  ;client certificate
@@ -32,3 +31,4 @@
  ;certificate of the CA that issued the HTTP server certificate
 -;serverca = ~/.koji/serverca.crt
 +serverca = ~/.fedora-server-ca.cert
++

@@ -1,14 +1,15 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name: koji
-Version: 1.6.0
-Release: 1%{?dist}.1
+Version: 1.7.0
+Release: 1%{?dist}
 License: LGPLv2 and GPLv2+
 # koji.ssl libs (from plague) are GPLv2+
 Summary: Build system tools
 Group: Applications/System
 URL: http://fedorahosted.org/koji
 Patch0: fedora-config.patch
+Source0: https://fedorahosted.org/released/koji/koji-%{version}.tar.bz2
 Source0: https://fedorahosted.org/releases/k/o/koji/%{name}-%{version}.tar.bz2
 Source1: README.epel
 
@@ -30,7 +31,7 @@ Group: Applications/Internet
 License: LGPLv2 and GPLv2
 # rpmdiff lib (from rpmlint) is GPLv2 (only)
 Requires: httpd
-Requires: mod_python
+Requires: mod_wsgi
 Requires: postgresql-python
 Requires: %{name} = %{version}-%{release}
 
@@ -113,7 +114,7 @@ Utilities for the Koji system
 Summary: Koji Web UI
 Group: Applications/Internet
 Requires: httpd
-Requires: mod_python
+Requires: mod_wsgi
 Requires: mod_auth_kerb
 Requires: postgresql-python
 Requires: python-cheetah
@@ -176,7 +177,8 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root)
 %{_datadir}/koji-web
 %{_sysconfdir}/kojiweb
-%config(noreplace) /etc/httpd/conf.d/kojiweb.conf
+%config(noreplace) %{_sysconfdir}/httpd/conf.d/kojiweb.conf
+%config(noreplace) %{_sysconfdir}/kojiweb/web.conf
 
 %files builder
 %defattr(-,root,root)
@@ -230,6 +232,10 @@ if [ $1 = 0 ]; then
 fi
 
 %changelog
+* Fri Jun 01 2012 Dennis Gilmore <dennis@ausil.us> - 1.7.0-1
+- update to 1.7.0 many bugfixes and improvements
+- now uses mod_wsgi 
+
 * Mon Jan 03 2011 Dennis Gilmore <dennis@ausil.us> - 1.6.0-1.1
 - drop Requires on qemu-img on epel for koji-vm
 - add readme note on epel

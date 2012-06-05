@@ -13,7 +13,7 @@
  
  ;url of package download site
 -;pkgurl = http://www.example.com/packages
-+pkgurl = http://koji.fedoraproject.org/packages
++topurl = http://kojipkgs.fedoraproject.org/
  
  ;path to the koji top directory
  ;topdir = /mnt/koji

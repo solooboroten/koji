@@ -2,7 +2,7 @@
 
 Name: koji
 Version: 1.7.0
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: LGPLv2 and GPLv2+
 # koji.ssl libs (from plague) are GPLv2+
 Summary: Build system tools
@@ -231,6 +231,9 @@ if [ $1 = 0 ]; then
 fi
 
 %changelog
+* Tue Jun 05 2012 Dennis Gilmore <dennis@ausil.us> - 1.7.0-2
+- use topurl not pkgurl in the fedora config
+
 * Fri Jun 01 2012 Dennis Gilmore <dennis@ausil.us> - 1.7.0-1
 - update to 1.7.0 many bugfixes and improvements
 - now uses mod_wsgi 

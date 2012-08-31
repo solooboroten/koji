@@ -1,0 +1,26 @@
+From 79352bb36675888d765b2a1eef970ded459bcbc5 Mon Sep 17 00:00:00 2001
+From: Dennis Gilmore <dennis@ausil.us>
+Date: Fri, 31 Aug 2012 00:13:16 -0500
+Subject: [PATCH 22/22] only try to  make /dev/urandom if it doesnt already
+ exist
+
+---
+ builder/kojid | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/builder/kojid b/builder/kojid
+index 92d40f1..58720b4 100755
+--- a/builder/kojid
++++ b/builder/kojid
+@@ -1779,7 +1779,7 @@ class ImageTask(BaseTaskHandler):
+                 "Could not create loopback device files: %s" % parseStatus(rv, '"%s"' % cmd)
+ 
+         # Create /dev/urandom
+-        cmd = 'mknod /dev/urandom c 1 9'
++        cmd = '[ ! -e /dev/urandom ] && (mknod /dev/urandom c 1 9)'
+         rv = broot.mock(['--chroot', cmd])
+         if rv:
+             broot.expire()
+-- 
+1.7.11.4
+

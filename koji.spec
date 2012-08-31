@@ -2,7 +2,7 @@
 
 Name: koji
 Version: 1.7.0
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: LGPLv2 and GPLv2+
 # koji.ssl libs (from plague) are GPLv2+
 Summary: Build system tools
@@ -13,6 +13,7 @@ Source0: https://fedorahosted.org/released/koji/koji-%{version}.tar.bz2
 Source1: README.epel
 Patch1: 0022-only-try-to-make-dev-urandom-if-it-doesnt-already-ex.patch
 Patch2: 0003-in-taginfo-command-avoid-passing-recently-added-even.patch
+Patch3: 0001-ensure-that-we-dont-already-have-a-dev-loopX-in-the-.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch: noarch
@@ -131,6 +132,7 @@ cp %{SOURCE1} README.epel
 %patch0 -p1 -b .orig
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %build
 
@@ -235,6 +237,9 @@ if [ $1 = 0 ]; then
 fi
 
 %changelog
+* Sat Sep 01 2012 Dennis Gilmore <dennis@ausil.us> - 1.7.0-5
+- add patch to check for /dev/loopX before making them
+
 * Fri Aug 31 2012 Dennis Gilmore <dennis@ausil.us> - 1.7.0-4
 - add patch to only make /dev/urandom if it doesnt exist
 - add upstream patch for taginfo fixes with older servers

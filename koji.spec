@@ -1,16 +1,14 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name: koji
-Version: 1.7.0
-Release: 7%{?dist}
+Version: 1.7.1
+Release: 1%{?dist}
 License: LGPLv2 and GPLv2+
 # koji.ssl libs (from plague) are GPLv2+
 Summary: Build system tools
 Group: Applications/System
 URL: http://fedorahosted.org/koji
 Patch0: fedora-config.patch
-Patch1: 0003-in-taginfo-command-avoid-passing-recently-added-even.patch
-Patch2: 0001-mount-all-of-dev.patch
 
 Source: https://fedorahosted.org/released/koji/koji-%{version}.tar.bz2
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -124,8 +122,6 @@ koji-web is a web UI to the Koji system.
 %prep
 %setup -q
 %patch0 -p1 -b .orig
-%patch1 -p1
-%patch2 -p1
 
 %build
 
@@ -229,6 +225,9 @@ if [ $1 = 0 ]; then
 fi
 
 %changelog
+* Wed Nov 21 2012 Dennis Gilmore <dennis@ausil.us> - 1.7.1-1
+- update to upstream 1.7.1 release
+
 * Sat Sep 01 2012 Dennis Gilmore <dennis@ausil.us> - 1.7.0-7
 - add patch to mount all of /dev on appliances and lives
 

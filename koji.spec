@@ -2,7 +2,7 @@
 
 Name: koji
 Version: 1.7.1
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: LGPLv2 and GPLv2+
 # koji.ssl libs (from plague) are GPLv2+
 Summary: Build system tools
@@ -11,6 +11,8 @@ URL: http://fedorahosted.org/koji
 Patch0: fedora-config.patch
 Source0: https://fedorahosted.org/released/koji/koji-%{version}.tar.bz2
 Source1: README.epel
+Patch1: koji-1.7.1-fix-external-repos.patch
+Patch2: koji-1.7.1-checkUpload.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch: noarch
@@ -127,6 +129,8 @@ koji-web is a web UI to the Koji system.
 %setup -q
 cp %{SOURCE1} README.epel
 %patch0 -p1 -b .orig
+%patch1 -p1 -b .repos
+%patch2 -p1 -b .int
 
 %build
 
@@ -231,6 +235,10 @@ if [ $1 = 0 ]; then
 fi
 
 %changelog
+* Sun Jan 20 2013 Dennis Gilmore <dennis@ausil.us> - 1.7.1-2
+- revert "avoid baseurl option in createrepo" patch
+- fix integer overflow issue in checkUpload handler
+
 * Wed Nov 21 2012 Dennis Gilmore <dennis@ausil.us> - 1.7.1-1
 - update to upstream 1.7.1 release
 

@@ -2,7 +2,7 @@
 
 Name: koji
 Version: 1.7.1
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: LGPLv2 and GPLv2+
 # koji.ssl libs (from plague) are GPLv2+
 Summary: Build system tools
@@ -229,6 +229,9 @@ if [ $1 = 0 ]; then
 fi
 
 %changelog
+* Thu Feb 14 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.7.1-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_19_Mass_Rebuild
+
 * Sun Jan 20 2013 Dennis Gilmore <dennis@ausil.us> - 1.7.1-2
 - revert "avoid baseurl option in createrepo" patch
 - fix integer overflow issue in checkUpload handler

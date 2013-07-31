@@ -2,7 +2,7 @@
 
 Name: koji
 Version: 1.8.0
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: LGPLv2 and GPLv2+
 # koji.ssl libs (from plague) are GPLv2+
 Summary: Build system tools
@@ -231,6 +231,9 @@ if [ $1 = 0 ]; then
 fi
 
 %changelog
+* Wed Jul 31 2013 Dennis Gilmore <dennis@ausil.us> - 1.8.0-2
+- update from git snapshot
+
 * Mon Apr 01 2013 Dennis Gilmore <dennis@ausil.us> - 1.8.0-1
 - update to upstream 1.8.0
 

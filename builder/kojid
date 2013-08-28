@@ -2293,6 +2293,9 @@ class LiveCDTask(ImageTask):
         isoname = '%s-%s-%s' % (name, version, release)
         cmd.extend(['-f', isoname[:32]])
 
+        # using custom options if they are defined
+        cmd.extend(self.options.livecd_creator_opts.split())
+
         # Run livecd-creator
         rv = broot.mock(['--cwd', '/tmp', '--chroot', '--'] + cmd)
         self.uploadFile(os.path.join(broot.rootdir(), livecd_log[1:]))
@@ -3071,7 +3074,8 @@ def get_options():
                 'failed_buildroot_lifetime' : 3600 * 4,
                 'cert': '/etc/kojid/client.crt',
                 'ca': '/etc/kojid/clientca.crt',
-                'serverca': '/etc/kojid/serverca.crt'}
+                'serverca': '/etc/kojid/serverca.crt',
+                'livecd_creator_opts': ''}
     if config.has_section('kojid'):
         for name, value in config.items('kojid'):
             if name in ['sleeptime', 'maxjobs', 'minspace', 'retry_interval',

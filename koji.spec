@@ -2,13 +2,14 @@
 
 Name: koji
 Version: 1.8.0
-Release: 2%{?dist}
+Release: 2%{?dist}.altell1.1
 License: LGPLv2 and GPLv2+
 # koji.ssl libs (from plague) are GPLv2+
 Summary: Build system tools
 Group: Applications/System
 URL: http://fedorahosted.org/koji
 Patch0: fedora-config.patch
+Patch1: altell-kojid-livecd_creator_opts.patch
 Source0: https://fedorahosted.org/released/koji/koji-%{version}.tar.bz2
 Source1: README.epel
 
@@ -127,6 +128,7 @@ koji-web is a web UI to the Koji system.
 %setup -q
 cp %{SOURCE1} README.epel
 %patch0 -p1 -b .orig
+%patch1 -p1 -b .livecd_creator_opts
 
 %build
 
@@ -231,6 +233,9 @@ if [ $1 = 0 ]; then
 fi
 
 %changelog
+* Thu Aug 29 2013 Aleksey Avdeev <avdeev@altell.ru> - 1.8.0-2.el6.altell1.1
+- add the "livecd_creator_opts" kojid parameter (bz#1002227)
+
 * Wed Jul 31 2013 Dennis Gilmore <dennis@ausil.us> - 1.8.0-2
 - update from git snapshot
 

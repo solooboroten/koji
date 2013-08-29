@@ -1,0 +1,51 @@
+From b655a7f7b070f4489346b664beb06495dea5f301 Mon Sep 17 00:00:00 2001
+From: Aleksey Avdeev <avdeev@altell.ru>
+Date: Wed, 28 Aug 2013 19:51:48 +0400
+Subject: kojid: add the "livecd_creator_opts" kojid parameter: custom options
+ for livecd-creator
+
+---
+ builder/kojid      |    6 +++++-
+ builder/kojid.conf |    5 +++++
+ 2 files changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/builder/kojid b/builder/kojid
+index 326aeb7..253da23 100755
+--- a/builder/kojid
++++ b/builder/kojid
+@@ -2293,6 +2293,9 @@ class LiveCDTask(ImageTask):
+         isoname = '%s-%s-%s' % (name, version, release)
+         cmd.extend(['-f', isoname[:32]])
+ 
++        # using custom options if they are defined
++        cmd.extend(self.options.livecd_creator_opts.split())
++
+         # Run livecd-creator
+         rv = broot.mock(['--cwd', '/tmp', '--chroot', '--'] + cmd)
+         self.uploadFile(os.path.join(broot.rootdir(), livecd_log[1:]))
+@@ -3071,7 +3074,8 @@ def get_options():
+                 'failed_buildroot_lifetime' : 3600 * 4,
+                 'cert': '/etc/kojid/client.crt',
+                 'ca': '/etc/kojid/clientca.crt',
+-                'serverca': '/etc/kojid/serverca.crt'}
++                'serverca': '/etc/kojid/serverca.crt',
++                'livecd_creator_opts': ''}
+     if config.has_section('kojid'):
+         for name, value in config.items('kojid'):
+             if name in ['sleeptime', 'maxjobs', 'minspace', 'retry_interval',
+diff --git a/builder/kojid.conf b/builder/kojid.conf
+index 1fa9ad4..b7dff89 100644
+--- a/builder/kojid.conf
++++ b/builder/kojid.conf
+@@ -73,3 +73,8 @@ from_addr=Koji Build System <buildsys@example.com>
+ 
+ ;certificate of the CA that issued the HTTP server certificate
+ ;serverca = /etc/kojid/serverca.crt
++
++;configuration for livecd-tools
++
++;custom options for livecd-creator
++;livecd_creator_opts =
+-- 
+1.7.10.4
+
